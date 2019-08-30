@@ -1,0 +1,47 @@
+@import '~antd/dist/antd.css'
+
+.App {
+  text-align: center;
+}
+
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+  margin: 16px auto 0;
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
+.App-login {
+  width: 400px;
+  height: 300px;
+  border-radius: 8px;
+  border: 1px solid #61dafb;
+  background: #282c34;
+}
+
+.App-login > h3 {
+  color: #61dafb;
+  margin: 22px auto;
+  text-align: center;
+}
+
+.App-login-username {
+  margin-bottom: 8px;
+}
+
+.App-login-password {
+  margin-top: 8px;
+}
