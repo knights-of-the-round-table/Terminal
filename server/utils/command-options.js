@@ -12,6 +12,6 @@ const optionDefinitions = [
 
 const args = commandLineArgs( optionDefinitions )
 
-console.log( args )
+console.log( 'args', args )
 
 module.exports = args

@@ -1,6 +1,5 @@
 import socket from './socket'
 
-
 /**
  * 请求数据
  * @param {String} event 事件名称（api）

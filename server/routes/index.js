@@ -1,7 +1,7 @@
 const user = require( './user' )
-const message = require( './message' )
+const io = require( './io' )
 
 module.exports = {
     ...user,
-    ...message
+    ...io
 }

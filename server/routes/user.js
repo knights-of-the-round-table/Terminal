@@ -3,9 +3,6 @@ const bcrypt = require( 'bcryptjs' )
 const jwt = require( 'jwt-simple' )
 
 const User = require( '../models/User' )
-const Group = require( '../models/Group' )
-const Friend = require( '../models/Friend' )
-const Message = require( '../models/Message' )
 const Socket = require( '../models/Socket' )
 
 const config = require( '../config/server' )
@@ -36,9 +33,6 @@ module.exports = {
         const user = await User.findOne( { username } )
         assert( !user, '该用户名已存在' )
 
-        const defaultGroup = await Group.findOne( { isDefault: true } )
-        assert( defaultGroup, '默认群组不存在' )
-
         const salt = await bcrypt.genSaltSync( saltRounds )
         const hash = await bcrypt.hashSync( password, salt )
 
@@ -59,9 +53,6 @@ module.exports = {
             throw err
         }
 
-        defaultGroup.members.push( newUser )
-        await defaultGroup.save()
-
         const { _id, avatar } = newUser
         const token = generatorToken( _id, environment )
 
@@ -77,14 +68,8 @@ module.exports = {
             _id,
             avatar,
             username,
-            groups: [{
-                _id: defaultGroup._id,
-                name: defaultGroup.name,
-                avatar: defaultGroup.avatar,
-                messages: []
-            }],
-            friends: [],
-            token
+            token,
+            expires: config.tokenExpiresTime
         } )
     },
 
@@ -104,22 +89,6 @@ module.exports = {
         user.lastLoginTime = Date.now()
         await user.save()
 
-        const groups = await Group.find( { members: user }, {
-            _id: 1,
-            name: 1,
-            avatar: 1,
-            createTime: 1
-        } )
-        groups.forEach( group => {
-            ctx.socket.join( group._id )
-        } )
-
-        const friends = await Friend
-            .find( {
-                from: user._id
-            } )
-            .populate( 'to', { avatar: 1, username: 1 } )
-
         const { _id, avatar } = user
         const token = generatorToken( user._id, environment )
 
@@ -135,9 +104,8 @@ module.exports = {
             _id,
             avatar,
             username,
-            groups,
-            friends,
-            token
+            token,
+            expires: config.tokenExpiresTime
         } )
     },
 
@@ -164,22 +132,6 @@ module.exports = {
         user.lastLoginTime = Date.now()
         await user.save()
 
-        const groups = await Group.find( { members: user }, {
-            _id: 1,
-            name: 1,
-            avatar: 1,
-            createTime: 1
-        } )
-        groups.forEach( group => {
-            ctx.socket.join( group._id )
-        } )
-
-        const friends = await Friend
-            .find( {
-                from: user._id
-            } )
-            .populate( 'to', { avatar: 1, username: 1 } )
-
         const { _id, username, avatar } = user
 
         ctx.socket.user = _id
@@ -193,9 +145,7 @@ module.exports = {
         return responseSuccess( {
             _id,
             avatar,
-            username,
-            groups,
-            friends
+            username
         } )
     },
 

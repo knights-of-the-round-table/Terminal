@@ -5,22 +5,17 @@
 </template>
 
 <script>
-import cookie from 'js-cookie';
-
-import authMixins from '@/mixins/auth';
-
-import fetch from '@/utils/fetch';
 import socket from '@/utils/socket';
 
 export default {
-  mixins: [authMixins],
   methods: {
     iinitSocket () {
       socket.on( 'connect', async () => {
-        const token = cookie.get( 'token' );
-
+        const token = localStorage.getItem( 'token' );
         if ( token ) {
-          this.loginByToken();
+          this.loginByToken( token );
+        } else {
+          this.showLogin();
         }
       } );
 
@@ -36,9 +31,6 @@ export default {
         console.log( message.to );
       } );
     }
-  },
-  created () {
-    this.iinitSocket();
   }
 }
 </script>

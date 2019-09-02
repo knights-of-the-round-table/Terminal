@@ -16,7 +16,9 @@ export default {
   },
   methods: {
     async handleInput ( e ) {
-      const [err, res] = await fetch( 'io', e.target.value )
+      const [err, res] = await fetch( 'io', {
+        input: e.target.value
+      } )
 
       if ( err ) {
         console.error( err )
