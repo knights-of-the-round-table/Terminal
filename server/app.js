@@ -1,4 +1,5 @@
 const Koa = require( 'koa' )
+const Router = require( 'koa-router' );
 const IO = require( 'koa-socket-2' )
 const koaSend = require( 'koa-send' )
 const koaStatic = require( 'koa-static' )
@@ -19,6 +20,7 @@ const route = require( './middlewares/route' )
 const routes = require( './routes' )
 
 const app = new Koa()
+const router = new Router()
 const io = new IO( {
   ioOptions: {
     pingTimeout: 10000,
@@ -26,23 +28,10 @@ const io = new IO( {
   }
 } )
 
-
-// 将路由指向 index.html
-app.use( async ( ctx, next ) => {
-  if ( !/\./.test( ctx.request.url ) ) {
-    await koaSend(
-      ctx,
-      'index.html',
-      {
-        root: path.join( __dirname, '../public' ),
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        gzip: true
-      }
-    )
-  } else {
-    await next()
-  }
-} )
+router
+  .get( '/api/auth/token', ( ctx, next ) => {
+    ctx.body = 'Hello World!';
+  } )
 
 // 静态文件访问
 app.use( koaStatic(
@@ -52,6 +41,10 @@ app.use( koaStatic(
     gzip: true
   }
 ) )
+
+app
+  .use( router.routes() )
+  .use( router.allowedMethods() );
 
 // 注入应用
 io.attach( app )
