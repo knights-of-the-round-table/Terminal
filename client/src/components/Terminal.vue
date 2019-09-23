@@ -1,36 +1,71 @@
 <template>
   <div class="terminal">
     <textarea @input="handleInput" v-model="input"></textarea>
+    <pre>{{ output }}</pre>
   </div>
 </template>
 
 <script>
-import fetch from '@/utils/fetch';
+import IO from 'socket.io-client'
+
+let socket = null
 
 export default {
   name: 'Terminal',
+  props: {
+    socketOptions: {
+      type: Object,
+      default () { return { reconnectionDelay: 1000 } }
+    }
+  },
   data () {
     return {
-      input: ''
+      input: '',
+      output: ''
     }
   },
   methods: {
     async handleInput ( e ) {
-      const [err, res] = await fetch( 'io', {
-        input: e.target.value
+      const [err, res] = await this.fetch( 'input', {
+        i: e.target.value
       } )
 
-      if ( err ) {
-        console.error( err )
-      }
+      console.log( err, res )
+    },
+    fetch ( event, data = {} ) {
+      return new Promise( resolve => {
+        socket.emit( event, data, ( { status, data } ) => {
+          if ( status === 'OK' ) {
+            resolve( [null, data] )
+          } else {
+            resolve( data, null )
+          }
+        } )
+      } )
+    },
+    getConnection () {
+      socket = new IO( '//localhost:4499', Object.assign( {}, this.socketOptions, { query: { name: 'Vinci' } } ) )
 
-      console.log( res )
+      socket.on( 'connect', async () => {
+        console.log( 'socket connect' )
+      } )
+      socket.on( 'connect', async () => {
+        console.log( 'socket connect' )
+      } )
+      socket.on( 'disconnect', async () => {
+        console.log( 'socket disconnect' )
+      } )
+      socket.on( 'output', async ( message ) => {
+        this.output = message
+      } )
     }
+  },
+  mounted () {
+    this.getConnection()
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .terminal {
   font-size: 14px;

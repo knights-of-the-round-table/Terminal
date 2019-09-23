@@ -1,5 +1,4 @@
 const assert = require( 'assert' );
-const { responseError } = require( '../utils/response' )
 
 /**
  * 全局异常捕获
@@ -10,10 +9,13 @@ module.exports = function () {
             await next();
         } catch ( err ) {
             if ( err instanceof assert.AssertionError ) {
-                ctx.res = responseError( err.message );
+                ctx.send( err.message, false );
+
                 return
             }
-            ctx.res = responseError( `Server Error: ${err.message}` );
+
+            ctx.status = 500
+            ctx.send( `Server Error: ${err.message}`, false );
             console.error( ctx.event, 'Unhandled Error\n', err );
         }
     };

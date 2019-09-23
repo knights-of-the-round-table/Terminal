@@ -3,15 +3,18 @@
  */
 module.exports = function () {
     const noUseLoginEvent = {
-        register: true,
-        login: true,
-        loginByToken: true
+        '/api/auth/login': true,
+        '/api/auth/register': true,
     };
+
     return async ( ctx, next ) => {
-        if ( !noUseLoginEvent[ctx.event] && !ctx.socket.user ) {
-            ctx.res = '请登录后再试';
+        if ( !noUseLoginEvent[ctx.path] ) {
+            ctx.status = 403
+            ctx.send( '请登录后再试', false )
+
             return;
         }
+
         await next();
     };
 };

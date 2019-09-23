@@ -1,12 +1,18 @@
 /**
- * 增强context对象
+ * JSON 返回
  */
 module.exports = function () {
-    return async ( ctx, next ) => {
-        await next();
+    function render ( data, success = true ) {
+        this.set( 'Content-Type', 'application/json' )
+        this.body = JSON.stringify( {
+            status: success ? 'OK' : 'FAIL',
+            data
+        } )
+    }
 
-        if ( ctx.acknowledge ) {
-            ctx.acknowledge( ctx.res );
-        }
-    };
+    return async ( ctx, next ) => {
+        ctx.send = render.bind( ctx )
+
+        await next()
+    }
 };

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import fetch from '@/utils/fetch';
 
 export default {
   components: {

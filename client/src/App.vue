@@ -10,35 +10,10 @@ import cookie from 'js-cookie';
 import authMixins from '@/mixins/auth';
 
 import fetch from '@/utils/fetch';
-import socket from '@/utils/socket';
 
 export default {
   mixins: [authMixins],
   methods: {
-    iinitSocket () {
-      socket.on( 'connect', async () => {
-        const token = cookie.get( 'token' );
-
-        if ( token ) {
-          this.loginByToken();
-        }
-      } );
-
-      socket.on( 'disconnect', () => {
-        console.error( 'disconnect' );
-      } );
-
-      socket.on( 'message', message => {
-        // TODO
-        // 判断 message 是否是新的 contact
-        // Y：加入新联系人
-        // N：pushContactMessages
-        console.log( message.to );
-      } );
-    }
-  },
-  created () {
-    this.iinitSocket();
   }
 }
 </script>

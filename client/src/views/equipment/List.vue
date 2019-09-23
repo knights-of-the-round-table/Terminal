@@ -1,5 +1,8 @@
 <template>
   <div class="equipments">
+    <div class="equipment" @click="createEquipment">
+      <Icon type="add"></Icon>
+    </div>
     <div
       class="equipment"
       v-for="equipment in equipments"
@@ -10,9 +13,11 @@
 </template>
 
 <script>
-import fetch from '@/utils/fetch';
 
 export default {
+  components: {
+    Icon: () => import( '@/components/Icon' ),
+  },
   data () {
     return {
       equipments: [
@@ -35,6 +40,9 @@ export default {
     }
   },
   methods: {
+    createEquipment () {
+      console.log( 'createEquipment' )
+    },
     handleViewEquipment ( { id } ) {
       this.$router.push( {
         name: 'equipment',

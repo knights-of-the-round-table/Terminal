@@ -3,16 +3,13 @@
  */
 module.exports = function () {
     return async ( ctx, next ) => {
-        if ( ctx.event === 'disconnect' ) {
-            return next();
-        }
-
-        console.log( `  <-- ${ctx.event}  ${ctx.socket.id} ${ctx.socket.user ? ctx.socket.user : ''}` );
+        const { method, path } = ctx
         const before = Date.now();
+
+        console.log( `\t<=\t[${method}] ${path}` );
 
         await next();
 
-        const after = Date.now();
-        console.log( `  --> ${ctx.event}  ${after - before}ms ${typeof ctx.res === 'string' ? ctx.res : ''}` );
+        console.log( `\t=>\t[${method}] ${path}  ${Date.now() - before}ms` );
     };
 };

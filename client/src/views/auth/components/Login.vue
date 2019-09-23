@@ -14,8 +14,6 @@
 <script>
 import platform from 'platform';
 
-import fetch from '@/utils/fetch';
-
 import authMixins from '@/mixins/auth'
 
 export default {
@@ -64,7 +62,7 @@ export default {
     async login () {
       const data = { ...this.form }
 
-      const [err, res] = await fetch( 'login', {
+      const [err, res] = await this.$fetch( 'login', {
         ...data,
         os: platform.os.family,
         browser: platform.name,
@@ -74,6 +72,7 @@ export default {
       if ( err ) {
         console.error( err );
       } else {
+        console.log( res )
         this.setAuth( res )
       }
     }
